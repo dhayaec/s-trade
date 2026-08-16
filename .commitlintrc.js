@@ -24,7 +24,6 @@ const config = {
     'type-case': [2, 'always', 'lowercase'],
     'type-empty': [2, 'never'],
     'scope-empty': [2, 'never'],
-    'scope-case': [2, 'always', 'kebab-case'],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
     'subject-case': [2, 'never', ['start-case', 'pascal-case', 'upper-case']],
