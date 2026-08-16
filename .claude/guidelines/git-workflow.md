@@ -24,7 +24,6 @@ optional body
 optional footer
 ```
 
-- **Scope is required** and must be kebab-case.
 - Subject is lowercase, no trailing period, header ≤ 100 chars.
 - Blank lines around body and footer; lines ≤ 100 chars.
 
