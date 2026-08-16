@@ -1,8 +1,5 @@
-// Placeholder schema — replace with your data model. Runs `pnpm prisma validate`
-// in CI, which only validates the schema, never a live database. Prisma 7 keeps
-// connection URLs out of the schema: the Migrate URL lives in prisma.config.ts
-// (datasource.url), and PrismaClient must be constructed with a driver `adapter`
-// (or `accelerateUrl` for Accelerate) — see https://pris.ly/d/config-datasource.
+// Swing Trading Analysis Platform - Prisma Schema
+// Run: pnpm prisma validate && pnpm prisma generate
 
 generator client {
   provider = "prisma-client-js"
@@ -12,10 +9,488 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum Exchange {
+  NSE
+  BSE
+  NASDAQ
+  NYSE
+  LSE
+  TSE
+}
+
+enum Timeframe {
+  D1
+  H4
+  H1
+  M30
+  M15
+}
+
+enum SetupDirection {
+  LONG
+  SHORT
+}
+
+enum SetupType {
+  BREAKOUT
+  PULLBACK
+  REVERSAL
+  SUPPORT_BOUNCE
+  RESISTANCE_REJECTION
+}
+
+enum SetupGrade {
+  EXCELLENT
+  STRONG
+  MODERATE
+  WEAK
+  REJECT
+}
+
+enum MarketRegime {
+  TRENDING_UP
+  TRENDING_DOWN
+  RANGE_BOUND
+  HIGH_VOLATILITY
+  LOW_VOLATILITY
+}
+
+enum TrendDirection {
+  BULLISH
+  BEARISH
+  NEUTRAL
+}
+
+enum PatternDirection {
+  BULLISH
+  BEARISH
+  NEUTRAL
+}
+
+enum PatternType {
+  HAMMER
+  INVERTED_HAMMER
+  BULLISH_ENGULFING
+  MORNING_STAR
+  PIERCING_PATTERN
+  SHOOTING_STAR
+  BEARISH_ENGULFING
+  EVENING_STAR
+  DARK_CLOUD_COVER
+  DOJI
+  SPINNING_TOP
+  INSIDE_BAR
+}
+
+enum ZoneType {
+  SUPPORT
+  RESISTANCE
+}
+
+enum ZoneSource {
+  SWING_HIGH
+  SWING_LOW
+  MULTIPLE_TOUCHES
+  PREV_DAY_HIGH
+  PREV_DAY_LOW
+  PREV_WEEK_HIGH
+  PREV_WEEK_LOW
+  CPR_PIVOT
+  CPR_BC
+  CPR_TC
+  PIVOT_R1
+  PIVOT_S1
+  PIVOT_R2
+  PIVOT_S2
+  CONSOLIDATION_TOP
+  CONSOLIDATION_BOTTOM
+  BREAKOUT_LEVEL
+  EMA_20
+  EMA_50
+  EMA_200
+}
+
+enum CPRClassification {
+  NARROW
+  NORMAL
+  WIDE
+}
+
+enum CPRPosition {
+  ABOVE
+  BELOW
+  INSIDE
+  AT_BC
+  AT_TC
+}
+
+enum StrategyType {
+  BREAKOUT
+  PULLBACK
+  SUPPORT_BOUNCE
+  REVERSAL
+}
+
+enum ExitSignal {
+  TARGET_1
+  TARGET_2
+  TARGET_3
+  STOP_LOSS
+  TIME_EXIT
+  SIGNAL_EXIT
+}
+
+// ============================================================================
+// CORE MODELS
+// ============================================================================
+
+model Symbol {
+  id           String    @id @default(cuid())
+  exchange     Exchange
+  symbol       String
+  name         String
+  sector       String?
+  industry     String?
+  marketCap    BigInt?
+  currency     String    @default("INR")
+  isActive     Boolean   @default(true)
+  lotSize      Int?
+  tickSize     Float?
+  description  String?
+  website      String?
+  listingDate  DateTime?
+  faceValue    Float?
+  isin         String?   @unique
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  dailyCandles            DailyCandle[]
+  hourlyCandles           HourlyCandle[]
+  analysisRuns            AnalysisRun[]
+  tradingSetups           TradingSetup[]
+  watchlistSymbols        WatchlistSymbol[]
+  backtestTrades          BacktestTrade[]
+  technicalIndicators     TechnicalIndicator[]
+  supportResistanceZones  SupportResistanceZone[]
+  candlestickPatterns     CandlestickPattern[]
+
+  @@unique([exchange, symbol])
+  @@index([symbol])
+  @@index([exchange, isActive])
+  @@map("symbols")
+}
+
+model DailyCandle {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  symbolId  String
+  timestamp DateTime // UTC midnight
+  open      Float
+  high      Float
+  low       Float
+  close     Float
+  volume    BigInt
+  adjustedClose Float?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  symbol Symbol @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@unique([symbolId, timestamp])
+  @@index([symbolId, timestamp])
+  @@map("daily_candles")
+}
+
+model HourlyCandle {
+  id        String   @id @default(cuid())
+  symbolId  String
+  timestamp DateTime // UTC timestamp
+  open      Float
+  high      Float
+  low       Float
+  close     Float
+  volume    BigInt
+  createdAt DateTime @default(now())
+
+  symbol Symbol @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@unique([symbolId, timestamp])
+  @@index([symbolId, timestamp])
+  @@map("hourly_candles")
+}
+
+// Polymorphic indicator storage (JSON for flexibility)
+model TechnicalIndicator {
+  id          String   @id @default(cuid())
+  symbolId    String
+  timeframe   Timeframe
+  timestamp   DateTime
+  indicator   String   // e.g., "EMA", "RSI", "MACD", "ATR", "ADX", "VOLUME", "CPR"
+  value       Json     // structured indicator value
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  symbol Symbol @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@unique([symbolId, timeframe, timestamp, indicator])
+  @@index([symbolId, timeframe, timestamp])
+  @@map("technical_indicators")
+}
+
+model SupportResistanceZone {
+  id            String     @id @default(cuid())
+  symbolId      String
+  timeframe     Timeframe
+  lower         Float
+  upper         Float
+  center        Float
+  type          ZoneType
+  strength      Float      // 0-100
+  touches       Int
+  sources       ZoneSource[]
+  firstTouch    DateTime
+  lastTouch     DateTime
+  volumeAtTouches Float[]
+  isBroken      Boolean    @default(false)
+  brokenAt      DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  symbol Symbol @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@index([symbolId, timeframe, type])
+  @@index([symbolId, timeframe, isBroken])
+  @@map("support_resistance_zones")
+}
+
+model AnalysisRun {
+  id            String       @id @default(cuid())
+  symbolId      String
+  timeframe     Timeframe
+  marketRegime  MarketRegime
+  trendDirection TrendDirection
+  trendStrength Float
+  generatedAt   DateTime     @default(now())
+  expiresAt     DateTime?
+  metadata      Json?
+
+  symbol      Symbol          @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+  tradingSetups TradingSetup[]
+
+  @@index([symbolId, generatedAt])
+  @@index([generatedAt])
+  @@map("analysis_runs")
+}
+
+model TradingSetup {
+  id                 String        @id @default(cuid())
+  analysisRunId      String
+  symbolId           String
+  direction          SetupDirection
+  setupType          SetupType
+  entry              Float
+  stopLoss           Float
+  targets            Float[]       // [target1, target2, target3]
+  riskPerShare       Float
+  rewardPerShare     Float
+  riskReward         Float
+  confidenceScore    Float         // 0-100
+  grade              SetupGrade
+  trendScore         Float
+  momentumScore      Float
+  volumeScore        Float
+  priceActionScore   Float
+  candlestickScore   Float
+  indicatorScore     Float
+  confirmations      Json          // Confirmation[]
+  invalidations      Json          // Invalidation[]
+  explanation        String
+  marketRegime       MarketRegime
+  trend              Json          // TrendAnalysis
+  scoreBreakdown     Json          // ScoreBreakdown
+  generatedAt        DateTime      @default(now())
+  isValid            Boolean       @default(true)
+  invalidatedAt      DateTime?
+  invalidationReason String?
+
+  analysisRun  AnalysisRun   @relation(fields: [analysisRunId], references: [id], onDelete: Cascade)
+  symbol       Symbol        @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+  patterns     CandlestickPattern[]
+
+  @@index([symbolId, generatedAt])
+  @@index([analysisRunId])
+  @@index([setupType, grade])
+  @@map("trading_setups")
+}
+
+model CandlestickPattern {
+  id              String         @id @default(cuid())
+  tradingSetupId  String?
+  symbolId        String
+  timeframe       Timeframe
+  name            String
+  type            PatternType
+  direction       PatternDirection
+  confidence      Float          // 0-100
+  contextScore    Float          // 0-100
+  totalScore      Float          // 0-100
+  candleIndexes   Int[]          // indices of candles forming pattern
+  timestamp       DateTime
+  explanation     String
+  contextFactors  Json           // ContextFactor[]
+  createdAt       DateTime       @default(now())
+
+  tradingSetup TradingSetup? @relation(fields: [tradingSetupId], references: [id], onDelete: Cascade)
+  symbol       Symbol         @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@index([symbolId, timeframe, timestamp])
+  @@index([tradingSetupId])
+  @@map("candlestick_patterns")
+}
+
+// ============================================================================
+// WATCHLISTS
+// ============================================================================
+
+model Watchlist {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  symbols WatchlistSymbol[]
+
+  @@map("watchlists")
+}
+
+model WatchlistSymbol {
+  id           String   @id @default(cuid())
+  watchlistId  String
+  symbolId     String
+  addedAt      DateTime @default(now())
+  notes        String?
+  // Cached analysis
+  lastAnalysisTimestamp DateTime?
+  lastSetupType SetupType?
+  lastScore     Float?
+  lastGrade     SetupGrade?
+
+  watchlist Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  symbol    Symbol    @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@unique([watchlistId, symbolId])
+  @@index([watchlistId])
+  @@map("watchlist_symbols")
+}
+
+// ============================================================================
+// STRATEGIES
+// ============================================================================
+
+model Strategy {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  type        StrategyType
+  version     String   @default("1.0.0")
+  description String?
+  isActive    Boolean  @default(true)
+  config      Json     // StrategyConfig
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  configs StrategyConfig[]
+
+  @@map("strategies")
+}
+
+model StrategyConfig {
+  id          String   @id @default(cuid())
+  strategyId  String
+  name        String   // e.g., "default", "aggressive", "conservative"
+  config      Json     // StrategyConfig
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  strategy Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+
+  @@unique([strategyId, name])
+  @@map("strategy_configs")
+}
+
+// ============================================================================
+// BACKTESTING
+// ============================================================================
+
+model BacktestRun {
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+  config            Json     // BacktestConfig
+  status            String   @default("PENDING") // PENDING, RUNNING, COMPLETED, FAILED
+  startedAt         DateTime?
+  completedAt       DateTime?
+  initialCapital    Float
+  finalCapital      Float?
+  totalTrades       Int      @default(0)
+  winningTrades     Int      @default(0)
+  losingTrades      Int      @default(0)
+  winRate           Float?
+  netProfit         Float?
+  netProfitPercent  Float?
+  profitFactor      Float?
+  expectancy        Float?
+  maxDrawdown       Float?
+  maxDrawdownDuration Int?
+  sharpeRatio       Float?
+  sortinoRatio      Float?
+  calmarRatio       Float?
+  recoveryFactor    Float?
+  errorMessage      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  trades BacktestTrade[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("backtest_runs")
+}
+
+model BacktestTrade {
+  id                    String     @id @default(cuid())
+  backtestRunId         String
+  symbolId              String
+  tradeId               String     @unique
+  entryDate             DateTime
+  entryPrice            Float
+  entrySignal           String
+  exitDate              DateTime?
+  exitPrice             Float?
+  exitSignal            ExitSignal?
+  direction             SetupDirection
+  quantity              Float
+  stopLoss              Float
+  targets               Float[]
+  pnl                   Float      @default(0)
+  pnlPercent            Float      @default(0)
+  rMultiple             Float      @default(0)
+  maxFavorableExcursion Float      @default(0)
+  maxAdverseExcursion   Float      @default(0)
+  holdingPeriodDays     Int        @default(0)
+  commissionPaid        Float      @default(0)
+  slippageCost          Float      @default(0)
+  createdAt             DateTime   @default(now())
+
+  backtestRun BacktestRun @relation(fields: [backtestRunId], references: [id], onDelete: Cascade)
+  symbol      Symbol      @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@index([backtestRunId])
+  @@index([symbolId, entryDate])
+  @@index([exitSignal])
+  @@map("backtest_trades")
 }
