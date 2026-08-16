@@ -26,12 +26,12 @@ export interface MarketStructure {
   swingHighs: SwingPoint[];
   swingLows: SwingPoint[];
   currentTrend: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
-  lastSwingHigh?: SwingPoint;
-  lastSwingLow?: SwingPoint;
+  lastSwingHigh: SwingPoint | undefined;
+  lastSwingLow: SwingPoint | undefined;
   bosDetected: boolean; // Break of Structure
   chochDetected: boolean; // Change of Character
-  bosLevel?: number;
-  chochLevel?: number;
+  bosLevel: number | undefined;
+  chochLevel: number | undefined;
 }
 
 // Support/Resistance Zones (not single prices)
@@ -48,7 +48,7 @@ export interface PriceZone {
   lastTouch: number; // timestamp
   volumeAtTouches: number[];
   isBroken: boolean;
-  brokenAt?: number; // timestamp
+  brokenAt: number | undefined; // timestamp
 }
 
 export type ZoneSource =
@@ -89,7 +89,7 @@ export interface Breakout {
   volumeMultiplier: number;
   closeAbove: boolean; // candle closed above resistance
   retested: boolean;
-  retestCandleIndex?: number;
+  retestCandleIndex: number | undefined;
   strength: number; // 0-100
   type: 'RESISTANCE_BREAK' | 'RANGE_BREAK' | 'CONSOLIDATION_BREAK' | 'PREV_HIGH_BREAK';
 }
@@ -106,11 +106,21 @@ export interface Pullback {
   pullbackStartIndex: number;
   pullbackEndIndex: number;
   pullbackLowIndex: number;
-  supportZone?: PriceZone;
-  emaTouched?: 'EMA20' | 'EMA50' | 'EMA200';
-  confirmationCandleIndex?: number;
-  confirmationType?:
-    'BULLISH_ENGULFING' | 'HAMMER' | 'MORNING_STAR' | 'PIERCING' | 'BULLISH_CANDLE';
+  supportZone: PriceZone | undefined;
+  emaTouched: 'EMA20' | 'EMA50' | 'EMA200' | undefined;
+  confirmationCandleIndex: number | undefined;
+  confirmationType:
+    | 'BULLISH_ENGULFING'
+    | 'HAMMER'
+    | 'MORNING_STAR'
+    | 'PIERCING'
+    | 'BULLISH_CANDLE'
+    | 'BEARISH_ENGULFING'
+    | 'SHOOTING_STAR'
+    | 'EVENING_STAR'
+    | 'DARK_CLOUD_COVER'
+    | 'BEARISH_CANDLE'
+    | undefined;
   depth: number; // pullback depth as % of impulse
   depthCategory: 'SHALLOW' | 'NORMAL' | 'DEEP' | 'EXCESSIVE';
   strength: number; // 0-100
@@ -131,6 +141,6 @@ export interface ConsolidationRange {
   duration: number; // number of candles
   touches: number;
   volumeProfile: 'DECREASING' | 'FLAT' | 'INCREASING';
-  breakoutDirection?: 'UP' | 'DOWN';
-  breakoutIndex?: number;
+  breakoutDirection: 'UP' | 'DOWN' | undefined;
+  breakoutIndex: number | undefined;
 }
