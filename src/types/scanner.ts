@@ -58,7 +58,7 @@ export interface ScanSummary {
 export interface Watchlist {
   id: string;
   name: string;
-  description?: string;
+  description: string;
   symbols: WatchlistSymbol[];
   createdAt: Date;
   updatedAt: Date;
@@ -69,7 +69,7 @@ export interface WatchlistSymbol {
   symbol: string;
   exchange: string;
   addedAt: Date;
-  notes?: string;
+  notes: string;
   // Cached analysis (refreshed periodically)
   lastAnalysis?: {
     timestamp: number;
@@ -107,7 +107,7 @@ export interface WatchlistSummary {
   withSetups: number;
   avgScore: number;
   byGrade: Record<SetupGrade, number>;
-  topSetup?: WatchlistSymbolAnalysis;
+  topSetup: WatchlistSymbolAnalysis | undefined;
 }
 
 // Import types

@@ -90,11 +90,11 @@ export interface BacktestMetrics {
   consecutiveWins: number;
   consecutiveLosses: number;
 
-  // Advanced
-  sharpeRatio?: number;
-  sortinoRatio?: number;
-  calmarRatio?: number;
-  recoveryFactor?: number; // netProfit / maxDrawdown
+  // Advanced - with exactOptionalPropertyTypes, use number | undefined
+  sharpeRatio: number | undefined;
+  sortinoRatio: number | undefined;
+  calmarRatio: number | undefined;
+  recoveryFactor: number | undefined; // netProfit / maxDrawdown
 }
 
 export interface BacktestResult {
