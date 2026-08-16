@@ -295,9 +295,9 @@ export function calculateMultiDayCPR(candles: Candle[], days: number = 5): Multi
 
   // Analyze multi-day characteristics using array indexing with known bounds
   const len = cprDays.length;
-  const last = cprDays[len - 1];
-  const prev = cprDays[len - 2];
-  const prevPrev = cprDays[len - 3];
+  const last = cprDays[len - 1] as CPRData;
+  const prev = cprDays[len - 2] as CPRData;
+  const prevPrev = cprDays[len - 3] as CPRData;
 
   // Check for narrowing (width decreasing)
   const narrowing = last.width < prev.width && prev.width < prevPrev.width;
@@ -317,7 +317,7 @@ export function calculateMultiDayCPR(candles: Candle[], days: number = 5): Multi
   let currentDirection: 'UP' | 'DOWN' | null = null;
 
   for (let i = len - 1; i >= 0; i--) {
-    const r = cprDays[i];
+    const r = cprDays[i] as CPRData;
     // Use previousDay.close as the "current price" for that day
     const dayClose = r.previousDay.close;
     const dayDirection = dayClose > r.tc ? 'UP' : dayClose < r.bc ? 'DOWN' : null;
