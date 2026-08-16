@@ -18,7 +18,7 @@ describe('PullbackStrategy', () => {
     expect(strategy.config).toBe(config);
   });
 
-  it('should return null for empty context (placeholder impl)', () => {
+  it('should return null for empty context', () => {
     const context = {} as AnalysisContext;
     const result = strategy.analyze(context);
     expect(result).toBeNull();
