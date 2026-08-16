@@ -1,0 +1,38 @@
+# Local dev infrastructure for Next.js template.
+#   docker compose up -d
+# Then point DATABASE_URL / REDIS_URL in `.env` at these services (see .env.example).
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: nextjs-template-postgres
+    environment:
+      POSTGRES_USER: nextjs_template
+      POSTGRES_PASSWORD: nextjs_template_dev
+      POSTGRES_DB: nextjs_template
+    ports:
+      - '5432:5432'
+    volumes:
+      - nextjs_template_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U nextjs_template -d nextjs_template']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: nextjs-template-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - nextjs_template_redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  nextjs_template_pgdata:
+  nextjs_template_redisdata:

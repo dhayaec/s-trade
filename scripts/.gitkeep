@@ -1,0 +1,2 @@
+# Placeholder for CLI scripts (historical data importers, maintenance tasks, etc.)
+# ESLint allows console.log in this directory via eslint.config.mjs
