@@ -47,8 +47,8 @@ export interface PatternDetectionResult {
   bullishPatterns: CandlestickPattern[];
   bearishPatterns: CandlestickPattern[];
   neutralPatterns: CandlestickPattern[];
-  strongestBullish?: CandlestickPattern;
-  strongestBearish?: CandlestickPattern;
+  strongestBullish: CandlestickPattern | undefined;
+  strongestBearish: CandlestickPattern | undefined;
 }
 
 // Candle shape analysis (for pattern detection)
