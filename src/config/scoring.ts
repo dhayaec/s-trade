@@ -150,6 +150,23 @@ export const FactorConfigSchema = z.object({
 });
 
 /**
+ * Build a default factor config by parsing the schema with explicit defaults.
+ * Each inner field has its own default, so we pass those values directly.
+ */
+const DEFAULT_FACTOR_CONFIG = FactorConfigSchema.parse({
+  trend: {},
+  priceAction: {},
+  supportResistance: {},
+  candlestick: {},
+  volume: {},
+  momentum: {},
+  cpr: {},
+  riskReward: {},
+});
+
+export { DEFAULT_FACTOR_CONFIG };
+
+/**
  * Calculate grade from score
  */
 export function calculateGrade(score: number): z.infer<typeof SetupGradeSchema> {
