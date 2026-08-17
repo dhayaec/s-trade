@@ -9,7 +9,7 @@ import type { ScoreBreakdown } from '@/config/scoring';
 import {
   DEFAULT_SCORE_WEIGHTS,
   DEFAULT_SCORE_THRESHOLDS,
-  FactorConfigSchema,
+  DEFAULT_FACTOR_CONFIG,
   calculateGrade,
   type ScoreThresholdsSchema,
 } from '@/config/scoring';
@@ -17,7 +17,7 @@ import {
 export interface ScorerConfig {
   weights: typeof DEFAULT_SCORE_WEIGHTS;
   thresholds: ReturnType<typeof ScoreThresholdsSchema.parse>;
-  factorConfig: ReturnType<typeof FactorConfigSchema.parse>;
+  factorConfig: typeof DEFAULT_FACTOR_CONFIG;
 }
 
 export class ScoringEngine {
@@ -27,7 +27,7 @@ export class ScoringEngine {
     this.config = {
       weights: config.weights ?? DEFAULT_SCORE_WEIGHTS,
       thresholds: config.thresholds ?? DEFAULT_SCORE_THRESHOLDS,
-      factorConfig: config.factorConfig ?? FactorConfigSchema.parse({}),
+      factorConfig: config.factorConfig ?? DEFAULT_FACTOR_CONFIG,
     };
   }
 
