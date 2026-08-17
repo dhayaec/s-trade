@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { QueryProvider } from '@/components/providers/query-provider';
+import { Navbar } from '@/components/navbar';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -11,8 +12,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <QueryProvider>{children}</QueryProvider>
+      <body className="min-h-screen flex flex-col">
+        <QueryProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+        </QueryProvider>
       </body>
     </html>
   );
