@@ -2,6 +2,7 @@
  * Single Symbol Analysis API
  * POST /api/analyze - Analyze a single symbol
  * Body: { symbol, exchange?, timeframe?, strategies? }
+ * Returns: { setup, scoreBreakdown, context, marketData }
  */
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -58,17 +59,26 @@ export async function POST(request: NextRequest) {
     const scan = await scanner.scanSymbols(scanRequest);
 
     if (!scan.results.length) {
-      return NextResponse.json(
-        { error: 'Analysis failed', details: scan.results[0]?.error ?? 'No result' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Analysis failed', details: 'No result' }, { status: 500 });
     }
 
-    const result = scan.results[0];
+    const result = scan.results[0]!;
 
+    // Return full analysis data needed by the frontend
     return NextResponse.json({
-      result,
-      summary: scan.summary,
+      success: true,
+      setup: result.setup,
+      scoreBreakdown: result.setup?.scoreBreakdown ?? null,
+      context: result.setup ? {/* context would be in setup */} : null,
+      marketData: {
+        symbol: result.symbol,
+        name: result.name,
+        price: result.price,
+        change: result.change,
+        changePercent: result.changePercent,
+        close: result.price,
+        lastPrice: result.price,
+      },
     });
   } catch (error) {
     console.error('Single symbol analyze error:', error);

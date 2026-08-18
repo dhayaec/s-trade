@@ -1,1 +1,355 @@
 @import 'tailwindcss';
+
+@theme {
+  /* Colors - Dark theme for professional trading terminal */
+  --color-background-primary: #0b0f14;
+  --color-background-secondary: #11161d;
+  --color-background-tertiary: #161d26;
+  --color-background-hover: #1a222e;
+  --color-background-active: #202731;
+
+  --color-border-primary: #202731;
+  --color-border-secondary: #2a3340;
+  --color-border-focus: #3b82f6;
+  --color-border-error: #ef4444;
+
+  --color-text-primary: #e8edf3;
+  --color-text-secondary: #8b96a5;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #0b0f14;
+
+  --color-positive-primary: #10b981;
+  --color-positive-secondary: #059669;
+  --color-positive-background: #064e3b;
+  --color-positive-border: #10b981;
+  --color-positive-text: #d1fae5;
+
+  --color-negative-primary: #ef4444;
+  --color-negative-secondary: #dc2626;
+  --color-negative-background: #7f1d1d;
+  --color-negative-border: #ef4444;
+  --color-negative-text: #fee2e2;
+
+  --color-warning-primary: #f59e0b;
+  --color-warning-secondary: #d97706;
+  --color-warning-background: #78350f;
+  --color-warning-border: #f59e0b;
+  --color-warning-text: #fef3c7;
+
+  --color-info-primary: #3b82f6;
+  --color-info-secondary: #2563eb;
+  --color-info-background: #1e3a5f;
+  --color-info-border: #3b82f6;
+  --color-info-text: #dbeafe;
+
+  --color-setup-long: #10b981;
+  --color-setup-short: #ef4444;
+  --color-setup-neutral: #8b96a5;
+
+  --color-grade-excellent: #10b981;
+  --color-grade-strong: #3b82f6;
+  --color-grade-moderate: #f59e0b;
+  --color-grade-weak: #ef4444;
+  --color-grade-reject: #64748b;
+
+  --color-chart-candle-up: #10b981;
+  --color-chart-candle-down: #ef4444;
+  --color-chart-candle-border-up: #059669;
+  --color-chart-candle-border-down: #dc2626;
+  --color-chart-candle-wick-up: #10b981;
+  --color-chart-candle-wick-down: #ef4444;
+  --color-chart-volume-up: rgba(16, 185, 129, 0.5);
+  --color-chart-volume-down: rgba(239, 68, 68, 0.5);
+  --color-chart-ema20: #3b82f6;
+  --color-chart-ema50: #f59e0b;
+  --color-chart-ema100: #8b5cf6;
+  --color-chart-ema200: #ec4899;
+  --color-chart-support: rgba(16, 185, 129, 0.15);
+  --color-chart-support-border: #10b981;
+  --color-chart-resistance: rgba(239, 68, 68, 0.15);
+  --color-chart-resistance-border: #ef4444;
+  --color-chart-entry: #3b82f6;
+  --color-chart-stoploss: #ef4444;
+  --color-chart-target1: #10b981;
+  --color-chart-target2: #059669;
+  --color-chart-grid: #1a222e;
+  --color-chart-crosshair: #3b82f6;
+
+  --color-overlay-light: rgba(11, 15, 20, 0.5);
+  --color-overlay-medium: rgba(11, 15, 20, 0.7);
+  --color-overlay-heavy: rgba(11, 15, 20, 0.9);
+
+  /* Typography */
+  --font-family-sans:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  --font-family-display: Geist, Inter, ui-sans-serif, system-ui, sans-serif;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+
+  /* Spacing */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
+  --spacing-10: 2.5rem;
+  --spacing-11: 2.75rem;
+  --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-28: 7rem;
+  --spacing-32: 8rem;
+
+  /* Sizing */
+  --height-xs: 1.5rem;
+  --height-sm: 2rem;
+  --height-md: 2.5rem;
+  --height-lg: 3rem;
+  --height-xl: 3.5rem;
+
+  --width-xs: 12rem;
+  --width-sm: 16rem;
+  --width-md: 24rem;
+  --width-lg: 32rem;
+  --width-xl: 48rem;
+  --width-2xl: 64rem;
+
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;
+  --radius-default: 0.375rem; /* 6px - controls */
+  --radius-md: 0.5rem; /* 8px - cards */
+  --radius-lg: 0.75rem; /* 12px - panels */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-default: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.3);
+  --shadow-focus: 0 0 0 2px #3b82f6;
+
+  /* Z-Index */
+  --z-hide: -1;
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-popover: 500;
+  --z-tooltip: 600;
+  --z-toast: 700;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border-primary);
+  }
+
+  html {
+    font-family: var(--font-family-sans);
+    background-color: var(--color-background-primary);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  /* Tabular numbers for price columns */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+    font-family: var(--font-family-mono);
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background-primary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-primary);
+    border-radius: var(--radius-full);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-secondary);
+  }
+
+  /* Focus visible */
+  :focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-color: var(--color-border-focus);
+    ring-offset: 2px;
+    ring-offset-color: var(--color-background-primary);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--color-info-background);
+    color: var(--color-info-text);
+  }
+}
+
+@layer utilities {
+  /* Text colors */
+  .text-primary {
+    color: var(--color-text-primary);
+  }
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+  .text-inverse {
+    color: var(--color-text-inverse);
+  }
+
+  .text-positive {
+    color: var(--color-positive-primary);
+  }
+  .text-negative {
+    color: var(--color-negative-primary);
+  }
+  .text-warning {
+    color: var(--color-warning-primary);
+  }
+  .text-info {
+    color: var(--color-info-primary);
+  }
+
+  .text-setup-long {
+    color: var(--color-setup-long);
+  }
+  .text-setup-short {
+    color: var(--color-setup-short);
+  }
+
+  .text-grade-excellent {
+    color: var(--color-grade-excellent);
+  }
+  .text-grade-strong {
+    color: var(--color-grade-strong);
+  }
+  .text-grade-moderate {
+    color: var(--color-grade-moderate);
+  }
+  .text-grade-weak {
+    color: var(--color-grade-weak);
+  }
+  .text-grade-reject {
+    color: var(--color-grade-reject);
+  }
+
+  /* Background colors */
+  .bg-primary {
+    background-color: var(--color-background-primary);
+  }
+  .bg-secondary {
+    background-color: var(--color-background-secondary);
+  }
+  .bg-tertiary {
+    background-color: var(--color-background-tertiary);
+  }
+  .bg-hover {
+    background-color: var(--color-background-hover);
+  }
+  .bg-active {
+    background-color: var(--color-background-active);
+  }
+
+  .bg-positive {
+    background-color: var(--color-positive-background);
+  }
+  .bg-negative {
+    background-color: var(--color-negative-background);
+  }
+  .bg-warning {
+    background-color: var(--color-warning-background);
+  }
+  .bg-info {
+    background-color: var(--color-info-background);
+  }
+
+  /* Border colors */
+  .border-primary {
+    border-color: var(--color-border-primary);
+  }
+  .border-secondary {
+    border-color: var(--color-border-secondary);
+  }
+  .border-focus {
+    border-color: var(--color-border-focus);
+  }
+  .border-error {
+    border-color: var(--color-border-error);
+  }
+
+  .border-positive {
+    border-color: var(--color-positive-border);
+  }
+  .border-negative {
+    border-color: var(--color-negative-border);
+  }
+  .border-warning {
+    border-color: var(--color-warning-border);
+  }
+  .border-info {
+    border-color: var(--color-info-border);
+  }
+
+  /* Chart utilities */
+  .chart-candle-up {
+    color: var(--color-chart-candle-up);
+  }
+  .chart-candle-down {
+    color: var(--color-chart-candle-down);
+  }
+}

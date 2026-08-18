@@ -6,6 +6,18 @@
 // Market Data
 export * from './market-data';
 
+// Chart layers
+export interface ChartLayerState {
+  priceAction: boolean;
+  supportResistance: boolean;
+  tradeSetup: boolean;
+  candlestick: boolean;
+  trend: boolean;
+  volume: boolean;
+  cpr: boolean;
+  indicators: boolean;
+}
+
 // Symbol
 export * from './symbol';
 
