@@ -14,6 +14,16 @@ export interface Candle {
   volume: number;
 }
 
+// Chart data point for lightweight-charts
+export interface MarketDataPoint {
+  time: string | number | Date;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
 export interface Quote {
   symbol: string;
   price: number;
